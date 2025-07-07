@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
 import { Layout } from '@/components/Layout'
 import { LoginForm } from './LoginForm'
+import { useAuth } from '../contexts/AuthContext'
+
 const LoginWrapper = styled.main`
   width: 100%;
   min-width: 600px;
@@ -60,7 +62,7 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const fromPath = location.state?.from?.pathname || '/'
-
+  const { login } = useAuth(); 
   const {
     id,
     pw,
@@ -73,11 +75,15 @@ export default function LoginPage() {
     isValid,
   } = LoginForm()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!isValid) return
-    navigate(fromPath, { replace: true })
-  }
+   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    
+    login(id); 
+    navigate(fromPath, { replace: true });
+  };
+
 
   return (
     <Layout>

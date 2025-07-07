@@ -1,6 +1,8 @@
-import styled from '@emotion/styled'
-import { ChevronLeft, UserRound } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; 
+import { ChevronLeft, UserRound } from 'lucide-react'; 
+import styled from '@emotion/styled';
+import React from 'react';
 
 const NavbarContainer = styled.nav`
   position: relative; 
@@ -38,6 +40,7 @@ const SideButton = styled.button`
 export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   return (
     <NavbarContainer>
@@ -49,10 +52,17 @@ export const Navbar = () => {
         <Logo src="/logo.png" alt="카카오 선물하기 로고" />
       </LogoWrapper>
 
-     
-      <SideButton onClick={() => navigate('/login', { state: { from: location } })}>
+      <SideButton
+        onClick={() => {
+          if (user) {
+            navigate('/my');
+          } else {
+            navigate('/login', { state: { from: location } });
+          }
+        }}
+      >
         <UserRound size={20} color="#000" />
       </SideButton>
     </NavbarContainer>
-  )
-}
+  );
+};

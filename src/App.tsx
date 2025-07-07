@@ -17,22 +17,19 @@ const AppWrapper = styled.div`
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Global styles={globalReset} />
-      <AppWrapper>
-        <Layout>
-          <main>
-            <GiftFriendSelector />
-            <HomeContentCard>
-              <CategorySection />
-              <MotivationBanner />
-              <RankingSection />
-            </HomeContentCard>
-          </main>
-        </Layout>
-      </AppWrapper>
-    </ThemeProvider>
-  )
+    <AppWrapper>
+      <Layout>
+        <main>
+          <GiftFriendSelector />
+          <HomeContentCard>
+            <CategorySection />
+            <MotivationBanner />
+            <RankingSection />
+          </HomeContentCard>
+        </main>
+      </Layout>
+    </AppWrapper>
+  );
 }
 
 export default App
