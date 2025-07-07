@@ -18,7 +18,14 @@ const Root = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path={PATHS.HOME} element={<App />} />
+        <Route
+          path={PATHS.HOME}
+          element={
+            <ProtectedRoute>
+              <App />
+            </ProtectedRoute>
+          }
+        />
         <Route path={PATHS.LOGIN} element={<LoginPage />} />
         <Route
           path={PATHS.ORDER}
