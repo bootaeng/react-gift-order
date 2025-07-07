@@ -1,43 +1,44 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
-  user: string | null;
-  login: (username: string) => void;
-  logout: () => void;
-};
+  user: string | null
+  isLoggedIn: boolean; 
+  login: (username: string) => void
+  logout: () => void
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user')
     if (storedUser) {
-      setUser(storedUser);
+      setUser(storedUser)
     }
-  }, []);
+  }, [])
 
   const login = (username: string) => {
-    setUser(username);
-    localStorage.setItem('user', username);
-  };
+    setUser(username)
+    localStorage.setItem('user', username)
+  }
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
-
+    setUser(null)
+    localStorage.removeItem('user')
+  }
+  const isLoggedIn = !!user;
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth는 AuthProvider내에서만 실행.');
-  return context;
-};
-export default AuthProvider;
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth는 AuthProvider내에서만 실행.')
+  return context
+}
+export default AuthProvider

@@ -20,7 +20,14 @@ const Root = () => {
       <Routes>
         <Route path={PATHS.HOME} element={<App />} />
         <Route path={PATHS.LOGIN} element={<LoginPage />} />
-        <Route path={PATHS.ORDER} element={<OrderPage />} />
+        <Route
+          path={PATHS.ORDER}
+          element={
+            <ProtectedRoute>
+              <OrderPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/my"
           element={
