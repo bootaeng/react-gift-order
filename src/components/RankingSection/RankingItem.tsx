@@ -1,15 +1,12 @@
 import styled from '@emotion/styled'
 
-
-
-
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 8px;
-  
+
   cursor: pointer;
   img {
     width: 100%;
@@ -57,10 +54,8 @@ const Price = styled.div`
 const Card = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start; 
+  align-items: flex-start;
 `
-
-
 
 interface Props {
   rank: number
@@ -68,11 +63,12 @@ interface Props {
   brand: string
   name: string
   price: number
+  onClick: () => void
 }
-export const RankingItem = ({ rank, image, brand, name, price }: Props) => {
+export const RankingItem = ({ rank, image, brand, name, price, onClick  }: Props) => {
   return (
     <Card>
-      <ImageWrapper>
+      <ImageWrapper onClick={onClick}>
         <img src={image} alt={name} />
         <RankBadge>{rank}</RankBadge>
       </ImageWrapper>

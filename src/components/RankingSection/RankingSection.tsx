@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { useState, useMemo} from 'react'
 import { RankingItem } from './RankingItem'
 import { mockProduct } from '@/data/products'
-
+import { useNavigate } from 'react-router-dom'
 const filters = [
   { label: '전체', emoji: 'ALL' },
   { label: '여성이', emoji: '👩🏻' },
@@ -17,7 +17,7 @@ type TabLabel = '받고 싶어한' | '많이 선물한' | '위시로 받은'
 
 
 export const RankingSection = () => {
-
+  const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState<FilterLabel>(() => {
     return (localStorage.getItem('selectedFilter') as FilterLabel) || '전체'
   })
@@ -42,6 +42,7 @@ export const RankingSection = () => {
   )
 
   return (
+    
     <Section>
       <Title>실시간 급상승 선물랭킹</Title>
 
@@ -79,6 +80,7 @@ export const RankingSection = () => {
             brand={item.brandInfo.name}
             name={item.name}
             price={item.price.sellingPrice}
+            onClick={() => navigate(`/order/${item.id}`)}
           />
         ))}
       </Grid>
