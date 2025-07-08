@@ -2,10 +2,11 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
   user: string | null
-  isLoggedIn: boolean; 
+  isLoggedIn: boolean
   login: (username: string) => void
   logout: () => void
 }
+const STORAGE_KEY_USER = 'user';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
+    const storedUser = localStorage.getItem(STORAGE_KEY_USER)
     if (storedUser) {
       setUser(storedUser)
     }
@@ -21,16 +22,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = (username: string) => {
     setUser(username)
-    localStorage.setItem('user', username)
+    localStorage.setItem(STORAGE_KEY_USER, username)
   }
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem('user')
+    localStorage.removeItem(STORAGE_KEY_USER)
   }
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!user
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoggedIn }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isLoggedIn,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

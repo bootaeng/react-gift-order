@@ -1,4 +1,9 @@
-import { Routes, Route } from 'react-router-dom'
+import {
+  Routes,
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+} from 'react-router-dom'
 import App from './App'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -12,39 +17,37 @@ const PATHS = {
   LOGIN: '/login',
   NOT_FOUND: '*',
   ORDER: '/order/:productId',
+  MY: '/my',
 }
-
+const authProtected = (element: React.ReactNode) => (
+  <ProtectedRoute>{element}</ProtectedRoute>
+)
+const router = createBrowserRouter([
+  {
+    path: PATHS.LOGIN,
+    element: authProtected(<LoginPage />),
+  },
+  {
+    path: PATHS.HOME,
+    element: authProtected(<App />),
+  },
+  {
+    path: PATHS.ORDER,
+    element: authProtected(<OrderPage />),
+  },
+  {
+    path: PATHS.MY,
+    element: authProtected(<MyPage />),
+  },
+  {
+    path: PATHS.NOT_FOUND,
+    element: authProtected(<NotFoundPage />),
+  },
+])
 const Root = () => {
   return (
     <AuthProvider>
-      <Routes>
-        <Route
-          path={PATHS.HOME}
-          element={
-            <ProtectedRoute>
-              <App />
-            </ProtectedRoute>
-          }
-        />
-        <Route path={PATHS.LOGIN} element={<LoginPage />} />
-        <Route
-          path={PATHS.ORDER}
-          element={
-            <ProtectedRoute>
-              <OrderPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my"
-          element={
-            <ProtectedRoute>
-              <MyPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path={PATHS.NOT_FOUND} element={<NotFoundPage />} />
-      </Routes>
+      <RouterProvider router={router} />
     </AuthProvider>
   )
 }
