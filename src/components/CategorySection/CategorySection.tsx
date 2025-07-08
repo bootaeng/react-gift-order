@@ -1,9 +1,9 @@
 import styled from '@emotion/styled'
 import { categories } from '@/data/categories'
-
+import { useNavigate } from 'react-router-dom'
 const Section = styled.section`
   background-color: ${({ theme }) => theme.colors.background.default};
-  border-radius: 12px; 
+  border-radius: 12px;
   padding: ${({ theme }) => theme.spacing.spacing5};
   margin-top: ${({ theme }) => theme.spacing.spacing6};
 `
@@ -42,9 +42,9 @@ const Item = styled.button`
 `
 
 const Image = styled.img`
-  width: ${({ theme }) => theme.spacing.spacing14};  // 56px
+  width: ${({ theme }) => theme.spacing.spacing14}; // 56px
   height: ${({ theme }) => theme.spacing.spacing14};
-  border-radius: 50%;  
+  border-radius: 50%;
 `
 
 const Label = styled.p`
@@ -54,12 +54,13 @@ const Label = styled.p`
 `
 
 export const CategorySection = () => {
+  const navigate = useNavigate();
   return (
     <Section>
       <Title>선물 테마</Title>
       <Grid>
         {categories.map(({ themeId, name, image }) => (
-          <Item key={themeId} onClick={() => { /* 나중에 구현 예정 */ }}>
+          <Item key={themeId} onClick={() => navigate(`/order/${themeId}`)}>
             <Image src={image} alt={name} />
             <Label>{name}</Label>
           </Item>

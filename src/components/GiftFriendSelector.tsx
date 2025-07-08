@@ -1,11 +1,10 @@
 import styled from '@emotion/styled'
 import { Plus } from 'lucide-react'
-
+import { useAuth } from '../contexts/AuthContext'
 const Wrapper = styled.section`
   margin-top: ${({ theme }) => theme.spacing.spacing1};
   margin-bottom: ${({ theme }) => theme.spacing.spacing1};
-    padding: ${({ theme }) => theme.spacing.spacing5};
-    
+  padding: ${({ theme }) => theme.spacing.spacing5};
 `
 
 const Button = styled.button`
@@ -36,13 +35,18 @@ const Text = styled.p`
 `
 
 export const GiftFriendSelector = () => {
+  const { user } = useAuth();
+
   return (
     <Wrapper>
       <Button>
         <IconCircle>
           <Plus size={20} color="#000" />
         </IconCircle>
-        <Text>선물할 친구를 선택해 주세요.</Text>
+        <Text>
+          {user && <strong>{user.split('@')[0]}님! </strong>}
+          선물할 친구를 선택해 주세요.
+        </Text>
       </Button>
     </Wrapper>
   )

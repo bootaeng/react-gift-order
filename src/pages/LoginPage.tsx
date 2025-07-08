@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import styled from '@emotion/styled'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Navbar } from '@/components/Navbar'
 import { Layout } from '@/components/Layout'
 import { LoginForm } from './LoginForm'
+import { useAuth } from '../contexts/AuthContext'
+
 const LoginWrapper = styled.main`
   width: 100%;
   min-width: 600px;
@@ -56,10 +57,12 @@ const LoginErrorMsg = styled.div`
   text-align: left;
   margin-bottom: 24px;
 `
+
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const fromPath = location.state?.from?.pathname || '/'
+  const { login, isLoggedIn } = useAuth()
 
   const {
     id,
@@ -76,8 +79,16 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!isValid) return
-    navigate(fromPath, { replace: true })
+
+    login(id)
+    
   }
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(fromPath, { replace: true })
+    }
+  }, [isLoggedIn])
 
   return (
     <Layout>

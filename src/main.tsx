@@ -14,9 +14,7 @@ if (rootElement) {
     <React.StrictMode>
       <ThemeProvider theme={theme}>
         <Global styles={globalReset} />
-        <BrowserRouter>
-          <Root />
-        </BrowserRouter>
+        <Root />
       </ThemeProvider>
     </React.StrictMode>
   )
