@@ -1,7 +1,6 @@
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { Navbar } from '@/components/Navbar'
 import styled from '@emotion/styled'
 
 const MyPageWrapper = styled.main`
