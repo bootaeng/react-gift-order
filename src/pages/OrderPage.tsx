@@ -5,6 +5,7 @@ import { useState } from 'react'
 import CardData from '@/data/CardData'
 import { mockProductList } from '@/data/products'
 import type { Recipient } from '@/components/RecipientOverlay'
+import { useNavigate } from 'react-router-dom'
 import {
   Container,
   Section,
@@ -27,6 +28,7 @@ import {
 
 export const OrderPage = () => {
   const { productId } = useParams()
+  const navigate = useNavigate()
   const product =
     mockProductList.find((item) => item.id === Number(productId)) ||
     mockProductList[0]
@@ -66,13 +68,25 @@ export const OrderPage = () => {
 
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
+    let didNavigate = false
+    setTimeout(() => {
+      if (!didNavigate) {
+        navigate('/')
+        didNavigate = true
+      }
+    }, 3000)
 
-    console.log({
-      message,
-      senderName,
-      recipients,
-      productId: product?.id,
-    })
+    alert(
+      `주문이 완료되었습니다.
+      상품명: ${product?.name || ''}
+      구매 수량: ${totalQuantity}
+      발신자 이름: ${senderName}
+      메시지: ${message}`
+    )
+    if (!didNavigate) {
+      navigate('/')
+      didNavigate = true
+    }
   }
 
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
