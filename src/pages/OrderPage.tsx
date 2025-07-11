@@ -4,6 +4,7 @@ import RecipientOverlay from '@/components/RecipientOverlay'
 import { useState } from 'react'
 import CardData from '@/data/CardData'
 import { mockProductList } from '@/data/products'
+import type { Recipient } from '@/components/RecipientOverlay'
 import {
   Container,
   Section,
@@ -35,7 +36,7 @@ export const OrderPage = () => {
 
   const [message, setMessage] = useState(selectedCard?.defaultTextMessage || '')
   const [senderName, setSenderName] = useState('')
-  const [recipients, setRecipients] = useState([]) 
+  const [recipients, setRecipients] = useState<Recipient[]>([])
   const [recipientOverlayOpen, setRecipientOverlayOpen] = useState(false)
 
   const [formErrors, setFormErrors] = useState({
@@ -93,13 +94,16 @@ export const OrderPage = () => {
                 setMessage(card.defaultTextMessage || '')
               }}
             >
-              <img src={card.thumbUrl} alt={card.title} />
+              <img src={card.thumbUrl} alt={card.defaultTextMessage} />
             </CardThumb>
           ))}
         </CardScroll>
 
         <CardPreview>
-          <img src={selectedCard?.imageUrl} alt={selectedCard?.title} />
+          <img
+            src={selectedCard?.imageUrl}
+            alt={selectedCard?.defaultTextMessage}
+          />
         </CardPreview>
 
         <Section>
@@ -159,7 +163,6 @@ export const OrderPage = () => {
                 color: '#aaa',
                 fontSize: '0.9rem',
                 maxHeight: '150px',
-
               }}
             >
               받는 사람이 없습니다.
@@ -243,9 +246,11 @@ export const OrderPage = () => {
       {recipientOverlayOpen && (
         <RecipientOverlay
           defaultRecipients={recipients}
-          onComplete={(list) => {
+          onComplete={(list, shouldClose) => {
             setRecipients(list)
-            setRecipientOverlayOpen(false)
+            if (shouldClose) {
+              setRecipientOverlayOpen(false)
+            }
           }}
           onClose={() => setRecipientOverlayOpen(false)}
         />

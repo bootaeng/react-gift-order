@@ -66,7 +66,7 @@ const Button = styled.button<{ primary?: boolean }>`
   color: ${({ primary }) => (primary ? '#000' : '#333')};
 `
 
-type Recipient = {
+export type Recipient = {
   name: string
   phone: string
   quantity: number
@@ -78,7 +78,7 @@ export default function RecipientOverlay({
   onClose,
 }: {
   defaultRecipients: Recipient[]
-  onComplete: (recipients: Recipient[]) => void
+  onComplete: (recipients: Recipient[], shouldClose: boolean) => void
   onClose: () => void
 }) {
   const {
@@ -87,6 +87,7 @@ export default function RecipientOverlay({
     handleSubmit,
     reset,
     formState: { errors },
+    getValues,
   } = useForm<{ recipients: Recipient[] }>({
     defaultValues: { recipients: defaultRecipients || [] },
   })
@@ -196,7 +197,12 @@ export default function RecipientOverlay({
                 </h4>
                 <button
                   type="button"
-                  onClick={() => remove(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(index)
+                    const newList = getValues('recipients') 
+                    onComplete(newList,false) 
+                  }}
                   style={{
                     color: '#999',
                     border: 'none',
