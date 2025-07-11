@@ -131,14 +131,15 @@ export default function RecipientOverlay({
       return
     }
 
-    onComplete(data.recipients)
+    onComplete(data.recipients, false)
     onClose()
   })
 
-  const onCancel = () => {
-    reset({ recipients: originalRecipients.current })
-    onClose()
-  }
+const onCancel = () => {
+  reset({ recipients: originalRecipients.current })
+  onComplete(originalRecipients.current, false) 
+  onClose()
+}
 
   return (
     <Backdrop>
