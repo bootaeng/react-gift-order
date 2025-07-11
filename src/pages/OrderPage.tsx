@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import Layout from '@/components/Layout'
-import { useState, useEffect } from 'react'
+import RecipientOverlay from '@/components/RecipientOverlay'
+import { useState } from 'react'
 import CardData from '@/data/CardData'
 import { mockProductList } from '@/data/products'
 import {
@@ -20,7 +21,7 @@ import {
   OrderBar,
   OrderPrice,
   ErrorText,
-  FormRow,
+  RecipientTable,
 } from '@/styles/OrderPage.styled'
 
 export const OrderPage = () => {
@@ -28,61 +29,55 @@ export const OrderPage = () => {
   const product =
     mockProductList.find((item) => item.id === Number(productId)) ||
     mockProductList[0]
+
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
   const selectedCard = CardData.find((card) => card.id === selectedCardId)
 
   const [message, setMessage] = useState(selectedCard?.defaultTextMessage || '')
   const [senderName, setSenderName] = useState('')
-  const [recipientName, setRecipientName] = useState('')
-  const [recipientPhone, setRecipientPhone] = useState('')
-  const [quantity, setQuantity] = useState(1)
+  const [recipients, setRecipients] = useState([]) 
+  const [recipientOverlayOpen, setRecipientOverlayOpen] = useState(false)
 
   const [formErrors, setFormErrors] = useState({
     message: '',
     senderName: '',
-    recipientName: '',
-    recipientPhone: '',
-    quantity: '',
+    recipients: '',
   })
-
-  const phoneRegex = /^010\d{8}$/
 
   const handleOrder = () => {
     const errors = {
       message: '',
       senderName: '',
-      recipientName: '',
-      recipientPhone: '',
-      quantity: '',
+      recipients: '',
     }
 
     if (!message.trim()) {
       errors.message = '메시지를 입력해주세요.'
     }
     if (!senderName.trim()) {
-      errors.senderName = '이름을 입력해주세요.'
+      errors.senderName = '보내는 사람 이름을 입력해주세요.'
     }
-    if (!recipientName.trim()) {
-      errors.recipientName = '이름을 입력해주세요.'
-    }
-    if (!recipientPhone.trim()) {
-      errors.recipientPhone = '전화번호를 입력해주세요.'
-    } else if (!phoneRegex.test(recipientPhone.trim())) {
-      errors.recipientPhone = '올바른 전화번호 형식이 아닙니다.'
-    }
-    if (quantity < 1) {
-      errors.quantity = '수량은 1개 이상이어야 합니다.'
+    if (recipients.length === 0) {
+      errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
     }
 
     setFormErrors(errors)
 
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
+
+    console.log({
+      message,
+      senderName,
+      recipients,
+      productId: product?.id,
+    })
   }
 
+  const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
   const totalPrice =
-    product?.price?.sellingPrice && quantity
-      ? product.price.sellingPrice * quantity
+    product?.price?.sellingPrice && totalQuantity
+      ? product.price.sellingPrice * totalQuantity
       : 0
 
   return (
@@ -129,42 +124,72 @@ export const OrderPage = () => {
         </Section>
 
         <Section>
-          <Label>받는 사람</Label>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.75rem',
+            }}
+          >
+            <Label style={{ margin: 0 }}>받는 사람</Label>
+            <button
+              type="button"
+              onClick={() => setRecipientOverlayOpen(true)}
+              style={{
+                border: '1px solid #ddd',
+                background: '#f5f5f5',
+                padding: '0.4rem 0.8rem',
+                borderRadius: '6px',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+              }}
+            >
+              수정
+            </button>
+          </div>
 
-          <FormRow>
-            <label>이름</label>
-            <Input
-              placeholder="이름을 입력하세요."
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-            />
-          </FormRow>
-          {formErrors.recipientName && (
-            <ErrorText>{formErrors.recipientName}</ErrorText>
+          {recipients.length === 0 ? (
+            <div
+              style={{
+                border: '1px solid #eee',
+                borderRadius: '8px',
+                padding: '40px 0',
+                textAlign: 'center',
+                color: '#aaa',
+                fontSize: '0.9rem',
+                maxHeight: '150px',
+
+              }}
+            >
+              받는 사람이 없습니다.
+              <br />
+              받는 사람을 추가해주세요.
+            </div>
+          ) : (
+            <RecipientTable>
+              <thead>
+                <tr>
+                  <th>이름</th>
+                  <th>전화번호</th>
+                  <th>수량</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recipients.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.name}</td>
+                    <td>{r.phone}</td>
+                    <td>{r.quantity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </RecipientTable>
           )}
 
-          <FormRow>
-            <label>전화번호</label>
-            <Input
-              placeholder="전화번호를 입력하세요."
-              value={recipientPhone}
-              onChange={(e) => setRecipientPhone(e.target.value)}
-            />
-          </FormRow>
-          {formErrors.recipientPhone && (
-            <ErrorText>{formErrors.recipientPhone}</ErrorText>
+          {formErrors.recipients && (
+            <ErrorText>{formErrors.recipients}</ErrorText>
           )}
-
-          <FormRow>
-            <label>수량</label>
-            <Input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </FormRow>
-          {formErrors.quantity && <ErrorText>{formErrors.quantity}</ErrorText>}
         </Section>
 
         <Section>
@@ -214,6 +239,17 @@ export const OrderPage = () => {
       <OrderBar onClick={handleOrder}>
         <OrderPrice>{totalPrice.toLocaleString()}원 주문하기</OrderPrice>
       </OrderBar>
+
+      {recipientOverlayOpen && (
+        <RecipientOverlay
+          defaultRecipients={recipients}
+          onComplete={(list) => {
+            setRecipients(list)
+            setRecipientOverlayOpen(false)
+          }}
+          onClose={() => setRecipientOverlayOpen(false)}
+        />
+      )}
     </Layout>
   )
 }
