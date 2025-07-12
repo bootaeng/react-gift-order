@@ -6,6 +6,8 @@ import CardData from '@/data/CardData'
 import { mockProductList } from '@/data/products'
 import type { Recipient } from '@/components/RecipientOverlay'
 import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/Root'
+import { useEffect, useRef } from 'react'
 import {
   Container,
   Section,
@@ -27,12 +29,13 @@ import {
 } from '@/styles/OrderPage.styled'
 
 export const OrderPage = () => {
+  const didNavigate = useRef(false)
   const { productId } = useParams()
   const navigate = useNavigate()
   const product =
     mockProductList.find((item) => item.id === Number(productId)) ||
     mockProductList[0]
-
+  const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
   const selectedCard = CardData.find((card) => card.id === selectedCardId)
 
@@ -68,13 +71,6 @@ export const OrderPage = () => {
 
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
-    let didNavigate = false
-    setTimeout(() => {
-      if (!didNavigate) {
-        navigate('/')
-        didNavigate = true
-      }
-    }, 3000)
 
     alert(
       `주문이 완료되었습니다.
@@ -83,11 +79,22 @@ export const OrderPage = () => {
       발신자 이름: ${senderName}
       메시지: ${message}`
     )
-    if (!didNavigate) {
-      navigate('/')
-      didNavigate = true
+    setOrderCompleted(true)
+    if (!didNavigate.current) {
+      navigate(PATHS.HOME)
+      didNavigate.current = true
     }
   }
+  useEffect(() => {
+    if (orderCompleted && !didNavigate.current) {
+      const timer = setTimeout(() => {
+        navigate(PATHS.HOME)
+        didNavigate.current = true
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [orderCompleted, navigate])
 
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
   const totalPrice =
